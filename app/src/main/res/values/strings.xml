@@ -3,4 +3,6 @@
     <string name="sign_in_or_sign_up">Sign In or Sign Up!</string>
     <string name="passwordError">The password should be at least 8 characters long</string>
     <string name="requiredError">This field is required</string>
+    <string name="confirmPasswordError">The passwords do not match</string>
+    <string name="genderError">Please select your gender</string>
 </resources>

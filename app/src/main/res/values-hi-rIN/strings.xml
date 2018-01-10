@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TM1</string>
+    <string name="passwordError">password chotu hai</string>
+    <string name="requiredError">kripya idhar kuch daaliye</string>
+    <string name="confirmPasswordError">password match nai ho rahe</string>
+    <string name="genderError">ling chuniye</string>
+    <string name="sign_in_or_sign_up">Khata Kholiye :)</string>
+</resources>
