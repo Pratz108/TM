@@ -1,13 +1,15 @@
-package ps.thoughtmanager;
+package ps.thoughtmanager.ui;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.transition.AutoTransition;
 import android.transition.Scene;
 import android.transition.Transition;
 import android.transition.TransitionManager;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -16,18 +18,28 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.util.Calendar;
 import java.util.Date;
 
-public class MainActivity extends AppCompatActivity {
+import ps.thoughtmanager.R;
+
+public class LoginActivity extends AppCompatActivity {
+    private final String LOG = "LoginActivity";
     Scene loginScene;
     Scene registerScene;
     ViewGroup mSceneRoot;
     Button loginBtn, registerBtn;
     Date date;
-    TextInputEditText username, password, confirmpassword, firstname, lastname;
+    TextInputEditText email, password, confirmpassword, firstname, lastname;
     TextView dob, gender;
     boolean isLogin = true;
+    private FirebaseAuth pAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +49,16 @@ public class MainActivity extends AppCompatActivity {
         loginScene = Scene.getSceneForLayout(mSceneRoot, ps.thoughtmanager.R.layout.login, this);
         registerScene = Scene.getSceneForLayout(mSceneRoot, ps.thoughtmanager.R.layout.register, this);
         initLogin();
+        pAuth = FirebaseAuth.getInstance();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FirebaseUser currentUser = pAuth.getCurrentUser();
+        if (currentUser != null) {
+            //todo launch main-activity and finish this activity
+        }
     }
 
     public void swapScenes(boolean isLogin) {
@@ -60,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void initLogin() {
-        username = findViewById(ps.thoughtmanager.R.id.username);
+        email = findViewById(ps.thoughtmanager.R.id.email);
         password = findViewById(ps.thoughtmanager.R.id.password);
         loginBtn = findViewById(ps.thoughtmanager.R.id.loginBtn);
         registerBtn = findViewById(ps.thoughtmanager.R.id.registerBtn);
@@ -79,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void attemptLogin() {
-        String usernameText = username.getText().toString().trim();
+        String emailText = email.getText().toString().trim();
         String passwordText = password.getText().toString().trim();
         boolean cancel = false;
         View errorView = null;
@@ -92,9 +114,9 @@ public class MainActivity extends AppCompatActivity {
             password.setError(getString(ps.thoughtmanager.R.string.passwordError));
             cancel = true;
         }
-        if ("".equals(usernameText)) {
-            errorView = username;
-            username.setError(getString(ps.thoughtmanager.R.string.requiredError));
+        if ("".equals(emailText)) {
+            errorView = email;
+            email.setError(getString(ps.thoughtmanager.R.string.requiredError));
             cancel = true;
         }
 
@@ -102,12 +124,25 @@ public class MainActivity extends AppCompatActivity {
             errorView.requestFocus();
             return;
         } else {
-            Toast.makeText(this, "login successful", Toast.LENGTH_SHORT).show();
+            pAuth.signInWithEmailAndPassword(emailText, passwordText).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (task.isSuccessful()) {
+                        Log.d(LOG, getString(R.string.loginSuccess));
+                        Toast.makeText(LoginActivity.this, getString(R.string.loginSuccess), Toast.LENGTH_SHORT).show();
+                    } else {
+                        Log.d(LOG, getString(R.string.loginFailed));
+                        Toast.makeText(LoginActivity.this, getString(R.string.loginFailed), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+
+
         }
     }
 
     public void initRegister() {
-        username = findViewById(ps.thoughtmanager.R.id.username);
+        email = findViewById(ps.thoughtmanager.R.id.email);
         password = findViewById(ps.thoughtmanager.R.id.password);
         confirmpassword = findViewById(ps.thoughtmanager.R.id.confirm_password);
         lastname = findViewById(ps.thoughtmanager.R.id.lastname);
@@ -118,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Calendar c = Calendar.getInstance();
-                DatePickerDialog dp = new DatePickerDialog(MainActivity.this, new DatePickerDialog.OnDateSetListener() {
+                DatePickerDialog dp = new DatePickerDialog(LoginActivity.this, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                         dob.setText("D.O.B. : " + day + "/" + (month + 1) + "/" + year);
@@ -139,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void attemptRegistration() {
-        String usernameText = username.getText().toString();
+        String emailText = email.getText().toString();
         String passwordText = password.getText().toString();
         String confirmpasswordText = confirmpassword.getText().toString();
         String firstnameText = firstname.getText().toString();
@@ -185,9 +220,9 @@ public class MainActivity extends AppCompatActivity {
             password.setError(getString(ps.thoughtmanager.R.string.passwordError));
             cancel = true;
         }
-        if ("".equals(usernameText)) {
-            errorView = username;
-            username.setError(getString(ps.thoughtmanager.R.string.requiredError));
+        if ("".equals(emailText)) {
+            errorView = email;
+            email.setError(getString(ps.thoughtmanager.R.string.requiredError));
             cancel = true;
         }
         if ("".equals(lastnameText)) {
@@ -209,7 +244,30 @@ public class MainActivity extends AppCompatActivity {
         if (cancel) {
             errorView.requestFocus();
         } else {
-            Toast.makeText(this, "registered", Toast.LENGTH_SHORT).show();
+
+            pAuth.createUserWithEmailAndPassword(emailText, passwordText).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (task.isSuccessful()) {
+                        Log.d(LOG, getString(R.string.userCreated));
+
+                        pAuth.getCurrentUser().sendEmailVerification().addOnCompleteListener(LoginActivity.this, new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    //todo: show verification scene
+                                }
+                            }
+                        });
+
+                        Toast.makeText(LoginActivity.this, getString(R.string.postRegistration), Toast.LENGTH_SHORT).show();
+                        swapScenes(false);
+
+                    } else {
+                        Log.d(LOG, getString(R.string.createUserFailed));
+                    }
+                }
+            });
         }
     }
 }

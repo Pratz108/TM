@@ -1,8 +1,14 @@
 <resources>
-    <string name="app_name">TM1</string>
+    <string name="app_name">ThoughtManager</string>
     <string name="sign_in_or_sign_up">Sign In or Sign Up!</string>
     <string name="passwordError">The password should be at least 8 characters long</string>
     <string name="requiredError">This field is required</string>
     <string name="confirmPasswordError">The passwords do not match</string>
     <string name="genderError">Please select your gender</string>
+    <string name="userCreated">User Successfully Created.</string>
+    <string name="createUserFailed">Failed to create User.</string>
+    <string name="loginSuccess">Login Successful</string>
+    <string name="loginFailed">Login Unsuccessful</string>
+    <string name="postRegistration">User Successfully Registered.\nProceed to Login</string>
+    <string name="verifyEmail">Verification Email Sent.\nPlease check your email.</string>
 </resources>
