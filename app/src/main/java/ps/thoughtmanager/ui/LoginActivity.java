@@ -1,6 +1,7 @@
 package ps.thoughtmanager.ui;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
@@ -23,11 +24,14 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Calendar;
 import java.util.Date;
 
 import ps.thoughtmanager.R;
+import ps.thoughtmanager.models.User;
 
 public class LoginActivity extends AppCompatActivity {
     private final String LOG = "LoginActivity";
@@ -40,11 +44,13 @@ public class LoginActivity extends AppCompatActivity {
     TextView dob, gender;
     boolean isLogin = true;
     private FirebaseAuth pAuth;
+    private FirebaseDatabase db;
+    private DatabaseReference ref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(ps.thoughtmanager.R.layout.activity_main);
+        setContentView(ps.thoughtmanager.R.layout.activity_login);
         mSceneRoot = findViewById(ps.thoughtmanager.R.id.login_register_scene);
         loginScene = Scene.getSceneForLayout(mSceneRoot, ps.thoughtmanager.R.layout.login, this);
         registerScene = Scene.getSceneForLayout(mSceneRoot, ps.thoughtmanager.R.layout.register, this);
@@ -55,6 +61,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        db = FirebaseDatabase.getInstance();
         FirebaseUser currentUser = pAuth.getCurrentUser();
         if (currentUser != null) {
             //todo launch main-activity and finish this activity
@@ -130,6 +137,8 @@ public class LoginActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         Log.d(LOG, getString(R.string.loginSuccess));
                         Toast.makeText(LoginActivity.this, getString(R.string.loginSuccess), Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                        finish();
                     } else {
                         Log.d(LOG, getString(R.string.loginFailed));
                         Toast.makeText(LoginActivity.this, getString(R.string.loginFailed), Toast.LENGTH_SHORT).show();
@@ -156,7 +165,7 @@ public class LoginActivity extends AppCompatActivity {
                 DatePickerDialog dp = new DatePickerDialog(LoginActivity.this, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                        dob.setText("D.O.B. : " + day + "/" + (month + 1) + "/" + year);
+                        dob.setText(day + " - " + (month + 1) + " - " + year);
                         date = new Date(year, month, day);
                     }
                 }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DATE));
@@ -174,12 +183,12 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void attemptRegistration() {
-        String emailText = email.getText().toString();
+        final String emailText = email.getText().toString();
         String passwordText = password.getText().toString();
         String confirmpasswordText = confirmpassword.getText().toString();
-        String firstnameText = firstname.getText().toString();
-        String lastnameText = lastname.getText().toString();
-        String gd;
+        final String firstnameText = firstname.getText().toString();
+        final String lastnameText = lastname.getText().toString();
+        final String gd;
 
         boolean cancel = false;
         View errorView = null;
@@ -198,6 +207,7 @@ public class LoginActivity extends AppCompatActivity {
                 gd = "Female";
                 break;
             default:
+                gd = "";
                 errorView = gender;
                 cancel = true;
                 gender.setError(getString(ps.thoughtmanager.R.string.requiredError));
@@ -250,21 +260,29 @@ public class LoginActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
                         Log.d(LOG, getString(R.string.userCreated));
-
-                        pAuth.getCurrentUser().sendEmailVerification().addOnCompleteListener(LoginActivity.this, new OnCompleteListener<Void>() {
+                        String user_email = emailText.substring(0, emailText.indexOf('.'));
+                        ref = db.getReference(user_email);
+                        ref.setValue(new User(firstnameText, lastnameText, dob.getText().toString(), gd, emailText, 0, 0));
+                        Toast.makeText(LoginActivity.this, getString(R.string.postRegistration), Toast.LENGTH_SHORT).show();
+                        swapScenes(false);
+                    }
+                    /*
+                      pAuth.getCurrentUser().sendEmailVerification().addOnCompleteListener(LoginActivity.this, new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()) {
                                     //todo: show verification scene
+
+
                                 }
                             }
-                        });
+                        );
+*/
 
-                        Toast.makeText(LoginActivity.this, getString(R.string.postRegistration), Toast.LENGTH_SHORT).show();
-                        swapScenes(false);
 
-                    } else {
-                        Log.d(LOG, getString(R.string.createUserFailed));
+                    else {
+                        Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        Log.d(LOG, task.getException().getMessage());//getString(R.string.createUserFailed));
                     }
                 }
             });
