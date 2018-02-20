@@ -1,0 +1,86 @@
+{
+  "project_info": {
+    "project_number": "993164039710",
+    "firebase_url": "https://tm-1008.firebaseio.com",
+    "project_id": "tm-1008",
+    "storage_bucket": "tm-1008.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:993164039710:android:f67efefa1644cf0f",
+        "android_client_info": {
+          "package_name": "ps.thoughtmanager"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "993164039710-9egsd177elps8qr9r0mijl55fbdpeiif.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJizknveWza8vPisb--0R_LB9PbfE3um0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:993164039710:android:23dd588cec72fe8c",
+        "android_client_info": {
+          "package_name": "com.example.dell.ps.thoughtmanager"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "993164039710-33bf6op4pok3lav35kd3krdfl265unmp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.dell.ps.thoughtmanager",
+            "certificate_hash": "4acbab2d2e540764ef2e4d3b54e105c5e1ed00a6"
+          }
+        },
+        {
+          "client_id": "993164039710-9egsd177elps8qr9r0mijl55fbdpeiif.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJizknveWza8vPisb--0R_LB9PbfE3um0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "993164039710-9egsd177elps8qr9r0mijl55fbdpeiif.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -6,6 +6,18 @@
     android:layout_height="match_parent"
     tools:context="ps.thoughtmanager.ui.MainActivity">
 
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_margin="30dp"
+        >
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:id="@+id/image"/>
+    </android.support.v7.widget.CardView>
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/positiveBtn"
         android:layout_width="52dp"
